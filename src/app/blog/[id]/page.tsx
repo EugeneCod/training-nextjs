@@ -17,6 +17,15 @@ async function getPost(id: string) {
   return response.json();
 }
 
+// Return a list of `params` to populate the [id] dynamic segment
+export async function generateStaticParams() {
+  const posts: IPost[] = await fetch('https://jsonplaceholder.typicode.com/posts').then((res) => res.json())
+
+  return posts.map((post) => ({
+    id: String(post.id),
+  }))
+}
+
 export async function generateMetadata(props: PostProps): Promise<Metadata> {
   const post: IPost = await getPost(props.params.id)
   return {
@@ -24,6 +33,8 @@ export async function generateMetadata(props: PostProps): Promise<Metadata> {
   };
 }
 
+// Несколько версий этой страницы будет статично сгенерировано,
+// используя 'params', возвращенные из generateStaticParams
 const Post: FC<PostProps> = async (props) => {
   const { params } = props;
   const post: IPost = await getPost(params.id);
